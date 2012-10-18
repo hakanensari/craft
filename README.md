@@ -1,4 +1,4 @@
-# Craft
+# Craft [![Build Status](https://secure.travis-ci.org/papercavalier/craft.png)](http://travis-ci.org/papercavalier/craft)
 
 Craft XML and HTML into objects.
 
