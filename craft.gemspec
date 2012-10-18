@@ -11,7 +11,7 @@ Gem::Specification.new do |gem|
   gem.description   = %q{Craft XML into objects}
   gem.summary       = %q{Craft is a data extraction tool that crafts objects
                          out of HTML and XML.}
-  gem.homepage      = 'https://github.com/papercavalier/craft'
+  gem.homepage      = 'http://papercavalier.com/craft/'
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
