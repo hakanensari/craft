@@ -28,7 +28,9 @@ class Craft
     #
     # name  - The Symbol name of the method.
     # paths - One or more String XPath of CSS queries. An optional Proc
-    #         transformation on the extracted value may be appended.
+    #         transformation on the extracted value may be appended. If none is
+    #         appended, the default transformation returns the stripped String
+    #         value of the node.
     #
     # Returns an Array.
     def many(name, *paths)
@@ -43,7 +45,9 @@ class Craft
     #
     # name  - The Symbol name of the method.
     # paths - One or more String XPath of CSS queries. An optional Proc
-    #         transformation on the extracted value may be appended.
+    #         transformation on the extracted value may be appended. If none is
+    #         appended, the default transformation returns the stripped String
+    #         value of the node.
     #
     # Returns an Object.
     def one(name, *paths)
