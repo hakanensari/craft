@@ -34,7 +34,7 @@ class Craft
     #
     # Returns an Array.
     def many(name, *paths)
-      transform = extract_transformation paths
+      transform = pop_transformation paths
 
       define_method name do
         @node.search(*paths).map { |node| transform.call node }
@@ -51,7 +51,7 @@ class Craft
     #
     # Returns an Object.
     def one(name, *paths)
-      transform = extract_transformation paths
+      transform = pop_transformation paths
 
       define_method name do
         transform.call @node.at(*paths)
@@ -69,7 +69,7 @@ class Craft
 
     private
 
-    def extract_transformation(array)
+    def pop_transformation(array)
       if array.last.respond_to? :call
         array.pop
       else
