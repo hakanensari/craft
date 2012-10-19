@@ -19,10 +19,6 @@ require 'nokogiri'
 #
 class Craft
   class << self
-    # We alias call to new so that crafted objects may nest themselves or other
-    # crafted objects as transformations.
-    alias call new
-
     # Define a method that extracts a collection of values from a parsed
     # document.
     #
@@ -37,7 +33,7 @@ class Craft
       transform = pop_transform_from_paths paths
 
       define_method name do
-        @node.search(*paths).map { |node| transform.call node }
+        @node.search(*paths).map { |node| instance_exec node, &transform }
       end
     end
 
@@ -51,10 +47,10 @@ class Craft
     #
     # Returns an Object.
     def one(name, *paths)
-      transform = pop_transformation paths
+      transform = pop_transform_from_paths paths
 
       define_method name do
-        transform.call @node.at(*paths)
+        instance_exec @node.at(*paths), &transform
       end
     end
 
@@ -67,17 +63,18 @@ class Craft
       new Nokogiri body
     end
 
+    def to_proc
+      klass = self
+      ->(node) { klass.new node }
+    end
+
     private
 
-      if array.last.respond_to? :call
     def pop_transform_from_paths(array)
+      if array.last.respond_to? :to_proc
         array.pop
       else
-        Module.new do
-          def self.call(node)
-            node.text.strip if node
-          end
-        end
+        ->(node) { node.text.strip if node }
       end
     end
   end
