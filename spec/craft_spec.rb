@@ -55,4 +55,13 @@ describe Craft do
     klass.one 'foo', 'ul', nest
     instance.foo.foo.must_equal %w(1 2)
   end
+
+  it 'transforms in context' do
+    klass.one 'foo', 'li', ->(node) { bar }
+    klass.send :define_method, :bar do
+      'bar'
+    end
+
+    instance.foo.must_equal 'bar'
+  end
 end
