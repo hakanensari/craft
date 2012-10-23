@@ -64,7 +64,8 @@ class Craft
     end
 
     def to_proc
-      ->(klass, node) { klass.new node }.curry.(self)
+      klass = self
+      ->(node) { klass.new node }
     end
 
     private
