@@ -7,6 +7,7 @@ require 'nokogiri'
 #
 #   module Transformations
 #     IntegerTransform = lambda { |n| Integer n.text }
+#     Timestamp        = lambda { Time.now }
 #   end
 #
 #   class Person < Craft
@@ -15,6 +16,7 @@ require 'nokogiri'
 #     one :name, 'div.name'
 #     one :age, 'div.age', IntegerTransform
 #     many :friends, 'li.friend', Person
+#     stub :created_at, Timestamp
 #   end
 #
 class Craft
