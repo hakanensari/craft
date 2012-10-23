@@ -19,7 +19,7 @@ require 'nokogiri'
 #
 class Craft
   class << self
-    # Returns the Array names of the attibutes.
+    # Returns an Array of names for the attributes defined in the class.
     attr :attribute_names
 
     # Define an attribute that extracts a collection of values from a parsed
@@ -108,5 +108,15 @@ class Craft
   # node - A Nokogiri::XML::Node.
   def initialize(node)
     @node = node
+  end
+
+  # Returns the Hash attributes.
+  def attributes
+    Hash[attribute_names.map { |key| [key, self.send(key)] }]
+  end
+
+  # Returns an Array of names for the attributes on this object.
+  def attribute_names
+    self.class.attribute_names
   end
 end

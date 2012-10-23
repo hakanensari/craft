@@ -109,4 +109,12 @@ describe Craft do
 
     instance.foo.must_equal 'bar'
   end
+
+  describe '#attributes' do
+    it 'returns attributes' do
+      klass.stub :foo
+      klass.one  :bar, 'li'
+      instance.attributes.must_equal({ foo: nil, bar: '1' })
+    end
+  end
 end
