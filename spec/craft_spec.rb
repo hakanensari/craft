@@ -59,6 +59,11 @@ describe Craft do
       klass.stub :foo, 1
       instance.foo.must_equal 1
     end
+
+    it 'returns a dynamic value' do
+      klass.stub :foo, -> { Time.now }
+      instance.foo.must_be_instance_of Time
+    end
   end
 
   it 'nests' do

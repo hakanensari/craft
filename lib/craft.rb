@@ -72,7 +72,7 @@ class Craft
     # Returns nothing.
     def stub(name, value = nil)
       define_method name do
-        value
+        value.respond_to?(:call) ? value.call : value
       end
     end
 
