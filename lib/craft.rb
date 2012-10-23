@@ -19,16 +19,16 @@ require 'nokogiri'
 #
 class Craft
   class << self
-    # Define a method that extracts a collection of values from a parsed
+    # Define an attribute that extracts a collection of values from a parsed
     # document.
     #
-    # name  - The Symbol name of the method.
+    # name  - The Symbol name of the attribute.
     # paths - One or more String XPath of CSS queries. An optional Proc
     #         transformation on the extracted value may be appended. If none is
     #         appended, the default transformation returns the stripped String
     #         value of the node.
     #
-    # Returns an Array.
+    # Returns nothing.
     def many(name, *paths)
       transform = pop_transform_from_paths paths
 
@@ -37,15 +37,15 @@ class Craft
       end
     end
 
-    # Define a method that extracts a single value from a parsed document.
+    # Define an attribute that extracts a single value from a parsed document.
     #
-    # name  - The Symbol name of the method.
+    # name  - The Symbol name of the attribute.
     # paths - One or more String XPath of CSS queries. An optional Proc
     #         transformation on the extracted value may be appended. If none is
     #         appended, the default transformation returns the stripped String
     #         value of the node.
     #
-    # Returns an Object.
+    # Returns nothing.
     def one(name, *paths)
       transform = pop_transform_from_paths paths
 
@@ -61,6 +61,19 @@ class Craft
     # Returns an instance of its self.
     def parse(body)
       new Nokogiri body
+    end
+
+    # Define an attribute that returns a value without parsing the document.
+    #
+    # name  - The Symbol name of the attribute.
+    # value - Some value the attribute should return. If given a Proc, the
+    #         value will be generated dynamically (default: nil).
+    #
+    # Returns nothing.
+    def stub(name, value = nil)
+      define_method name do
+        value
+      end
     end
 
     def to_proc

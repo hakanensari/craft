@@ -17,30 +17,30 @@ describe Craft do
 
   describe '.many' do
     it 'extracts nodes' do
-      klass.many 'foo', 'li'
+      klass.many :foo, 'li'
       instance.foo.must_equal %w(1 2)
     end
 
     it 'transforms' do
-      klass.many 'foo', 'li', ->(node) { node.text.to_i }
+      klass.many :foo, 'li', ->(node) { node.text.to_i }
       instance.foo.must_equal [1, 2]
     end
   end
 
   describe '.one' do
     it 'extracts a node' do
-      klass.one 'foo', 'li'
+      klass.one :foo, 'li'
       instance.foo.must_equal '1'
     end
 
     it 'transforms' do
-      klass.one 'foo', 'li', ->(node) { node.text.to_i }
+      klass.one :foo, 'li', ->(node) { node.text.to_i }
       instance.foo.must_equal 1
     end
 
     describe 'given no matches' do
       before do
-        klass.one 'foo', 'foo'
+        klass.one :foo, 'bar'
       end
 
       it 'returns nil' do
@@ -49,15 +49,27 @@ describe Craft do
     end
   end
 
+  describe '.stub' do
+    it 'returns nil by default' do
+      klass.stub :foo
+      instance.foo.must_be_nil
+    end
+
+    it 'returns a static value' do
+      klass.stub :foo, 1
+      instance.foo.must_equal 1
+    end
+  end
+
   it 'nests' do
     nest = Class.new Craft
-    nest.many 'foo', 'li'
-    klass.one 'foo', 'ul', nest
+    nest.many :foo, 'li'
+    klass.one :foo, 'ul', nest
     instance.foo.foo.must_equal %w(1 2)
   end
 
   it 'transforms in context' do
-    klass.one 'foo', 'li', ->(node) { bar }
+    klass.one :foo, 'li', ->(node) { bar }
     klass.send :define_method, :bar do
       'bar'
     end
