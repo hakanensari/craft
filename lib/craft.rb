@@ -81,7 +81,7 @@ class Craft
       @attribute_names << name
 
       define_method name do
-        value.respond_to?(:call) ? value.call : value
+        value.respond_to?(:call) ? instance_exec(&value) : value
       end
     end
 
