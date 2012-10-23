@@ -45,6 +45,11 @@ describe Craft do
       klass.many :foo, 'ul', Class.new(Craft)
       instance.foo.each { |attr| attr.must_be_kind_of Craft }
     end
+
+    it 'has a parent when nested' do
+      klass.many :foo, 'li', Class.new(Craft)
+      instance.foo.each { |attr| attr.parent.must_equal instance }
+    end
   end
 
   describe '.one' do
@@ -72,6 +77,11 @@ describe Craft do
     it 'nests' do
       klass.one :foo, 'ul', Class.new(Craft)
       instance.foo.must_be_kind_of Craft
+    end
+
+    it 'has a parent when nested' do
+      klass.one :foo, 'li', Class.new(Craft)
+      instance.foo.parent.must_equal instance
     end
 
     describe 'given no matches' do
