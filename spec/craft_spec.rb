@@ -39,6 +39,14 @@ describe Craft do
       instance.foo.must_equal [1, 2]
     end
 
+    it 'transforms in context' do
+      klass.many :foo, 'li', ->(node) { bar }
+      klass.send :define_method, :bar do
+        'bar'
+      end
+      instance.foo.must_equal ['bar', 'bar']
+    end
+
     it 'stores attribute name' do
       klass.many :foo, 'li'
       klass.attribute_names.must_include :foo
@@ -54,6 +62,14 @@ describe Craft do
     it 'transforms' do
       klass.one :foo, 'li', ->(node) { node.text.to_i }
       instance.foo.must_equal 1
+    end
+
+    it 'transforms in context' do
+      klass.one :foo, 'li', ->(node) { bar }
+      klass.send :define_method, :bar do
+        'bar'
+      end
+      instance.foo.must_equal 'bar'
     end
 
     it 'stores attribute name' do
@@ -88,6 +104,14 @@ describe Craft do
       instance.foo.must_be_instance_of Time
     end
 
+    it 'transforms in context' do
+      klass.stub :foo, -> { bar }
+      klass.send :define_method, :bar do
+        'bar'
+      end
+      instance.foo.must_equal 'bar'
+    end
+
     it 'stores attribute name' do
       klass.stub :foo
       klass.attribute_names.must_include :foo
@@ -99,15 +123,6 @@ describe Craft do
     nest.many :foo, 'li'
     klass.one :foo, 'ul', nest
     instance.foo.foo.must_equal %w(1 2)
-  end
-
-  it 'transforms in context' do
-    klass.one :foo, 'li', ->(node) { bar }
-    klass.send :define_method, :bar do
-      'bar'
-    end
-
-    instance.foo.must_equal 'bar'
   end
 
   describe '#attributes' do
