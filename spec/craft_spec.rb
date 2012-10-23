@@ -19,6 +19,13 @@ describe Craft do
     it 'is empty by default' do
       klass.attribute_names.must_equal []
     end
+
+    it 'does not reference other attribute names' do
+      klass.stub :foo
+      other = Class.new Craft
+      other.stub :bar
+      klass.attribute_names.wont_equal other.attribute_names
+    end
   end
 
   describe '.many' do
