@@ -15,6 +15,12 @@ describe Craft do
     klass.parse html
   end
 
+  describe '.attribute_names' do
+    it 'is empty by default' do
+      klass.attribute_names.must_equal []
+    end
+  end
+
   describe '.many' do
     it 'extracts nodes' do
       klass.many :foo, 'li'
@@ -24,6 +30,11 @@ describe Craft do
     it 'transforms' do
       klass.many :foo, 'li', ->(node) { node.text.to_i }
       instance.foo.must_equal [1, 2]
+    end
+
+    it 'stores attribute name' do
+      klass.many :foo, 'li'
+      klass.attribute_names.must_include :foo
     end
   end
 
@@ -36,6 +47,11 @@ describe Craft do
     it 'transforms' do
       klass.one :foo, 'li', ->(node) { node.text.to_i }
       instance.foo.must_equal 1
+    end
+
+    it 'stores attribute name' do
+      klass.one :foo, 'li'
+      klass.attribute_names.must_include :foo
     end
 
     describe 'given no matches' do
@@ -63,6 +79,11 @@ describe Craft do
     it 'returns a dynamic value' do
       klass.stub :foo, -> { Time.now }
       instance.foo.must_be_instance_of Time
+    end
+
+    it 'stores attribute name' do
+      klass.stub :foo
+      klass.attribute_names.must_include :foo
     end
   end
 

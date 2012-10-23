@@ -19,6 +19,9 @@ require 'nokogiri'
 #
 class Craft
   class << self
+    # Returns the Array names of the attibutes.
+    attr :attribute_names
+
     # Define an attribute that extracts a collection of values from a parsed
     # document.
     #
@@ -31,6 +34,7 @@ class Craft
     # Returns nothing.
     def many(name, *paths)
       transform = pop_transform_from_paths paths
+      @attribute_names << name
 
       define_method name do
         @node.search(*paths).map { |node| instance_exec node, &transform }
@@ -48,6 +52,7 @@ class Craft
     # Returns nothing.
     def one(name, *paths)
       transform = pop_transform_from_paths paths
+      @attribute_names << name
 
       define_method name do
         instance_exec @node.at(*paths), &transform
@@ -71,6 +76,8 @@ class Craft
     #
     # Returns nothing.
     def stub(name, value = nil)
+      @attribute_names << name
+
       define_method name do
         value.respond_to?(:call) ? value.call : value
       end
@@ -82,6 +89,10 @@ class Craft
     end
 
     private
+
+    def inherited(subclass)
+      subclass.instance_variable_set :@attribute_names, []
+    end
 
     def pop_transform_from_paths(array)
       if array.last.respond_to? :to_proc
