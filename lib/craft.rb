@@ -19,35 +19,40 @@ require 'nokogiri'
 #
 class Craft
   class << self
-    # Define a method that extracts a collection of values from a parsed
+    # Returns an Array of names for the attributes defined in the class.
+    attr :attribute_names
+
+    # Define an attribute that extracts a collection of values from a parsed
     # document.
     #
-    # name  - The Symbol name of the method.
+    # name  - The Symbol name of the attribute.
     # paths - One or more String XPath of CSS queries. An optional Proc
     #         transformation on the extracted value may be appended. If none is
     #         appended, the default transformation returns the stripped String
     #         value of the node.
     #
-    # Returns an Array.
+    # Returns nothing.
     def many(name, *paths)
       transform = pop_transform_from_paths paths
+      @attribute_names << name
 
       define_method name do
         @node.search(*paths).map { |node| instance_exec node, &transform }
       end
     end
 
-    # Define a method that extracts a single value from a parsed document.
+    # Define an attribute that extracts a single value from a parsed document.
     #
-    # name  - The Symbol name of the method.
+    # name  - The Symbol name of the attribute.
     # paths - One or more String XPath of CSS queries. An optional Proc
     #         transformation on the extracted value may be appended. If none is
     #         appended, the default transformation returns the stripped String
     #         value of the node.
     #
-    # Returns an Object.
+    # Returns nothing.
     def one(name, *paths)
       transform = pop_transform_from_paths paths
+      @attribute_names << name
 
       define_method name do
         instance_exec @node.at(*paths), &transform
@@ -63,12 +68,31 @@ class Craft
       new Nokogiri body
     end
 
+    # Define an attribute that returns a value without parsing the document.
+    #
+    # name  - The Symbol name of the attribute.
+    # value - Some value the attribute should return. If given a Proc, the
+    #         value will be generated dynamically (default: nil).
+    #
+    # Returns nothing.
+    def stub(name, value = nil)
+      @attribute_names << name
+
+      define_method name do
+        value.respond_to?(:call) ? value.call : value
+      end
+    end
+
     def to_proc
       klass = self
       ->(node) { klass.new node }
     end
 
     private
+
+    def inherited(subclass)
+      subclass.instance_variable_set :@attribute_names, []
+    end
 
     def pop_transform_from_paths(array)
       if array.last.respond_to? :to_proc
@@ -84,5 +108,15 @@ class Craft
   # node - A Nokogiri::XML::Node.
   def initialize(node)
     @node = node
+  end
+
+  # Returns the Hash attributes.
+  def attributes
+    Hash[attribute_names.map { |key| [key, self.send(key)] }]
+  end
+
+  # Returns an Array of names for the attributes on this object.
+  def attribute_names
+    self.class.attribute_names
   end
 end
