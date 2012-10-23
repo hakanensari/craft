@@ -118,11 +118,24 @@ describe Craft do
     end
   end
 
-  it 'nests' do
-    nest = Class.new Craft
-    nest.many :foo, 'li'
-    klass.one :foo, 'ul', nest
-    instance.foo.foo.must_equal %w(1 2)
+  describe 'when nested' do
+    let(:child) do
+      Class.new(Craft) do
+        many :grandchildren, 'li'
+      end
+    end
+
+    before do
+      klass.one :child, 'ul', child
+    end
+
+    it 'transforms with parent' do
+      instance.child.grandchildren.must_equal %w(1 2)
+    end
+
+    it 'makes parent accessible to child' do
+      instance.child.parent.must_equal instance
+    end
   end
 
   describe '#attributes' do
