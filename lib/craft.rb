@@ -87,7 +87,7 @@ class Craft
 
     def to_proc
       klass = self
-      ->(node) { klass.new node }
+      ->(node) { klass.new node, self }
     end
 
     private
@@ -105,11 +105,14 @@ class Craft
     end
   end
 
+  attr :parent
+
   # Craft a new object.
   #
   # node - A Nokogiri::XML::Node.
-  def initialize(node)
+  def initialize(node, parent = nil)
     @node = node
+    @parent = parent
   end
 
   # Returns the Hash attributes.
