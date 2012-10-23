@@ -40,6 +40,11 @@ describe Craft do
       klass.many :foo, 'li'
       klass.attribute_names.must_include :foo
     end
+
+    it 'nests' do
+      klass.many :foo, 'ul', Class.new(Craft)
+      instance.foo.each { |attr| attr.must_be_kind_of Craft }
+    end
   end
 
   describe '.one' do
@@ -62,6 +67,11 @@ describe Craft do
     it 'stores attribute name' do
       klass.one :foo, 'li'
       klass.attribute_names.must_include :foo
+    end
+
+    it 'nests' do
+      klass.one :foo, 'ul', Class.new(Craft)
+      instance.foo.must_be_kind_of Craft
     end
 
     describe 'given no matches' do
@@ -98,19 +108,6 @@ describe Craft do
     it 'stores attribute name' do
       klass.stub :foo
       klass.attribute_names.must_include :foo
-    end
-  end
-
-  describe 'when nested' do
-    let(:child) { Class.new(Craft) {  many :grandchildren, 'li' } }
-    before { klass.one :child, 'ul', child }
-
-    it 'transforms with parent' do
-      instance.child.grandchildren.must_equal %w(1 2)
-    end
-
-    it 'makes parent accessible to child' do
-      instance.child.parent.must_equal instance
     end
   end
 
