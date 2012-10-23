@@ -3,17 +3,9 @@ require 'minitest/autorun'
 require 'craft'
 
 describe Craft do
-  let :html do
-    '<html><ul><li>1</li><li>2</li>'
-  end
-
-  let :klass do
-    Class.new Craft
-  end
-
-  let :instance do
-    klass.parse html
-  end
+  let(:html) { '<html><ul><li>1</li><li>2</li>' }
+  let(:klass) { Class.new Craft }
+  let(:instance) { klass.parse html }
 
   describe '.attribute_names' do
     it 'is empty by default' do
@@ -22,8 +14,7 @@ describe Craft do
 
     it 'does not reference other attribute names' do
       klass.stub :foo
-      other = Class.new Craft
-      other.stub :bar
+      other = Class.new(Craft) { stub :bar }
       klass.attribute_names.wont_equal other.attribute_names
     end
   end
@@ -39,11 +30,9 @@ describe Craft do
       instance.foo.must_equal [1, 2]
     end
 
-    it 'transforms in context' do
+    it 'transforms in scope' do
       klass.many :foo, 'li', ->(node) { bar }
-      klass.send :define_method, :bar do
-        'bar'
-      end
+      klass.send(:define_method, :bar) { 'bar' }
       instance.foo.must_equal ['bar', 'bar']
     end
 
@@ -64,11 +53,9 @@ describe Craft do
       instance.foo.must_equal 1
     end
 
-    it 'transforms in context' do
+    it 'transforms in scope' do
       klass.one :foo, 'li', ->(node) { bar }
-      klass.send :define_method, :bar do
-        'bar'
-      end
+      klass.send(:define_method, :bar) { 'bar' }
       instance.foo.must_equal 'bar'
     end
 
@@ -78,9 +65,7 @@ describe Craft do
     end
 
     describe 'given no matches' do
-      before do
-        klass.one :foo, 'bar'
-      end
+      before { klass.one :foo, 'bar' }
 
       it 'returns nil' do
         instance.foo.must_be_nil
@@ -104,11 +89,9 @@ describe Craft do
       instance.foo.must_be_instance_of Time
     end
 
-    it 'transforms in context' do
+    it 'transforms in scope' do
       klass.stub :foo, -> { bar }
-      klass.send :define_method, :bar do
-        'bar'
-      end
+      klass.send(:define_method, :bar) { 'bar' }
       instance.foo.must_equal 'bar'
     end
 
@@ -119,15 +102,8 @@ describe Craft do
   end
 
   describe 'when nested' do
-    let(:child) do
-      Class.new(Craft) do
-        many :grandchildren, 'li'
-      end
-    end
-
-    before do
-      klass.one :child, 'ul', child
-    end
+    let(:child) { Class.new(Craft) {  many :grandchildren, 'li' } }
+    before { klass.one :child, 'ul', child }
 
     it 'transforms with parent' do
       instance.child.grandchildren.must_equal %w(1 2)

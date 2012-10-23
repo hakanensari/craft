@@ -10,3 +10,4 @@ end
 platforms :jruby do
   gem 'minitest'
 end
+gem 'pry'
