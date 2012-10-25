@@ -6,6 +6,7 @@
 Craft XML and HTML into objects.
 
 ## Examples
+
 ```ruby
 require 'craft'
 require 'open-uri'
