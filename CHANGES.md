@@ -1,4 +1,4 @@
-HEAD
+v0.1.0
 -----------
 
 - When nesting, make parent accessible to child.
