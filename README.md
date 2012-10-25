@@ -1,4 +1,7 @@
-# Craft [![Build Status](https://secure.travis-ci.org/papercavalier/craft.png)](http://travis-ci.org/papercavalier/craft)
+# Craft
+
+[![Build Status][1]][2]
+[![Code Climate][3]][4]
 
 Craft XML and HTML into objects.
 
@@ -40,3 +43,8 @@ end
 page = Page.parse open('http://www.google.com')
 page.scripts[0].body #=> 'window.google=...'
 ```
+
+[1]: https://secure.travis-ci.org/papercavalier/craft.png
+[2]: http://travis-ci.org/papercavalier/craft
+[3]: https://codeclimate.com/badge.png
+[4]: https://codeclimate.com/github/papercavalier/craft
