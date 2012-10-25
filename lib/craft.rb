@@ -65,7 +65,7 @@ class Craft
     #
     # body - A String HTML or XML document.
     #
-    # Returns an instance of its self.
+    # Returns an instance of self, or, should we say, itself.
     def parse(body)
       new Nokogiri body
     end
@@ -85,6 +85,7 @@ class Craft
       end
     end
 
+    # Casts self to a Proc transform.
     def to_proc
       klass = self
       ->(node) { klass.new node, self }
@@ -105,11 +106,13 @@ class Craft
     end
   end
 
+  # Returns a parent Object if self is nested therein.
   attr :parent
 
   # Craft a new object.
   #
-  # node - A Nokogiri::XML::Node.
+  # node   - A Nokogiri::XML::Node.
+  # parent - An Object (default: nil).
   def initialize(node, parent = nil)
     @node = node
     @parent = parent
