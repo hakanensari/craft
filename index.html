@@ -27,7 +27,8 @@
         </ul>
       </header>
       <section>
-        <h1>Craft</h1>
+        <h1>Craft <a href="http://travis-ci.org/papercavalier/craft"><img src="https://secure.travis-ci.org/papercavalier/craft.png" alt="Build Status"></a>
+</h1>
 
 <p>Craft XML and HTML into objects.</p>
 
@@ -45,6 +46,9 @@
 
   <span class="c1"># Perform transforms on returned nodes</span>
   <span class="n">many</span>  <span class="ss">:images</span><span class="p">,</span>  <span class="s1">'img'</span><span class="p">,</span> <span class="nb">lambda</span> <span class="p">{</span> <span class="o">|</span><span class="n">img</span><span class="o">|</span> <span class="n">img</span><span class="o">.</span><span class="n">attr</span><span class="p">(</span><span class="s1">'src'</span><span class="p">)</span><span class="o">.</span><span class="n">upcase</span> <span class="p">}</span>
+
+  <span class="c1"># Stub attributes that don't need to be parsed</span>
+  <span class="n">stub</span> <span class="ss">:spidered_at</span><span class="p">,</span> <span class="nb">lambda</span> <span class="p">{</span> <span class="no">Time</span><span class="o">.</span><span class="n">now</span> <span class="p">}</span>
 <span class="k">end</span>
 
 <span class="n">page</span> <span class="o">=</span> <span class="no">Page</span><span class="o">.</span><span class="n">parse</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'http://www.google.com'</span><span class="p">)</span>
@@ -52,6 +56,8 @@
 <span class="n">page</span><span class="o">.</span><span class="n">title</span> <span class="c1">#=&gt; 'Google'</span>
 <span class="n">page</span><span class="o">.</span><span class="n">links</span> <span class="c1">#=&gt; ['http://www.google.com/imghp?hl=en&amp;tab=wi', ...]</span>
 <span class="n">page</span><span class="o">.</span><span class="n">images</span> <span class="c1">#=&gt; ['/LOGOS/2012/MOBY_DICK12-HP.JPG']</span>
+
+<span class="n">page</span><span class="o">.</span><span class="n">attributes</span> <span class="c1">#=&gt; { :title =&gt; 'Google', :links =&gt; ... }</span>
 
 <span class="k">class</span> <span class="nc">Script</span> <span class="o">&lt;</span> <span class="no">Craft</span>
   <span class="n">one</span> <span class="ss">:body</span><span class="p">,</span> <span class="s1">'text()'</span>
