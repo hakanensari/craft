@@ -1,3 +1,4 @@
+require 'craft/parentship'
 require 'craft/version'
 require 'nokogiri'
 
@@ -111,9 +112,8 @@ class Craft
   # node   - A Nokogiri::XML::Node.
   # parent - A Craft object (default: nil).
   def initialize(node, parent = nil)
-    @lock = Mutex.new
     @node = node
-    make_readable parent if parent
+    Parentship.new(self, parent).restore if parent
   end
 
   # Returns the Hash attributes.
@@ -121,22 +121,15 @@ class Craft
     Hash[attribute_names.map { |key| [key, self.send(key)] }]
   end
 
-  # Returns an Array of names for the attributes on this object.
+  # Returns an Array of names for the attributes on the object.
   def attribute_names
     self.class.attribute_names
   end
 
-  private
-
-  def make_readable(parent)
-    parent_name = (parent.class.name || 'parent')
+  # Returns a String name for the object.
+  def name
+    self.class.name
       .gsub(/([a-z0-9])([A-Z])/,'\1_\2')
       .downcase
-
-    @lock.synchronize {
-      self.class.send :attr, parent_name unless respond_to? parent_name
-    }
-
-    self.instance_variable_set "@#{parent_name}", parent
   end
 end

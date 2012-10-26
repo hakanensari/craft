@@ -22,7 +22,7 @@ describe Craft do
   end
 
   describe '.many' do
-    it 'extracts nodes' do
+    it 'crafts' do
       klass.many :foos, 'li'
       instance.foos.must_equal %w(1 2)
     end
@@ -43,15 +43,30 @@ describe Craft do
       klass.attribute_names.must_include :foos
     end
 
-    it 'embeds' do
-      klass.many :foos, 'ul', Class.new(Craft)
-      instance.foos.each { |attr| attr.must_be_kind_of Craft }
-    end
+    describe 'when nesting' do
+      let(:child_class) { Class.new Craft }
 
-    it 'is accessible' do
-      klass.stub! :name, 'BarBaz' do
-        klass.many :foos, 'li', Class.new(Craft)
-        instance.foos.first.bar_baz.must_equal instance
+      before do
+        klass.many :foos, 'ul', child_class
+      end
+
+      it 'crafts recursively' do
+        klass.stub! :name, 'BarBaz' do
+          instance.foos.each { |child| child.must_be_kind_of Craft }
+        end
+      end
+
+      it 'embeds parent' do
+        klass.stub! :name, 'BarBaz' do
+          instance.foos.each { |child| child.bar_baz.must_equal instance }
+        end
+      end
+
+      it 'will not override existing parent' do
+        child_class.class_eval { def bar_baz; 'ok'; end }
+        klass.stub! :name, 'BarBaz' do
+          instance.foos.first.bar_baz.must_equal 'ok'
+        end
       end
     end
   end
@@ -78,15 +93,23 @@ describe Craft do
       klass.attribute_names.must_include :foo
     end
 
-    it 'nests' do
-      klass.one :foo, 'li', Class.new(Craft)
-      instance.foo.must_be_kind_of Craft
-    end
+    describe 'when nesting' do
+      let(:child_class) { Class.new Craft }
 
-    it 'is accessible' do
-      klass.stub! :name, 'BarBaz' do
-        klass.one :foo, 'li', Class.new(Craft)
-        instance.foo.bar_baz.must_equal instance
+      before do
+        klass.one :foo, 'li', child_class
+      end
+
+      it 'crafts recursively' do
+        klass.stub! :name, 'BarBaz' do
+          instance.foo.must_be_kind_of Craft
+        end
+      end
+
+      it 'embeds parent' do
+        klass.stub! :name, 'BarBaz' do
+          instance.foo.bar_baz.must_equal instance
+        end
       end
     end
 
