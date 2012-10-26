@@ -129,10 +129,9 @@ class Craft
   private
 
   def make_readable(parent)
-    parent_name ||=
-      (parent.class.name || 'parent')
-        .gsub(/([a-z0-9])([A-Z])/,'\1_\2')
-        .downcase
+    parent_name = (parent.class.name || 'parent')
+      .gsub(/([a-z0-9])([A-Z])/,'\1_\2')
+      .downcase
 
     @lock.synchronize {
       self.class.send :attr, parent_name unless respond_to? parent_name
