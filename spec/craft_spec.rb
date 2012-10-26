@@ -51,21 +51,21 @@ describe Craft do
       end
 
       it 'crafts recursively' do
-        klass.stub! :name, 'BarBaz' do
+        klass.stub! :name, 'Bar' do
           instance.foos.each { |child| child.must_be_kind_of Craft }
         end
       end
 
       it 'embeds parent' do
-        klass.stub! :name, 'BarBaz' do
-          instance.foos.each { |child| child.bar_baz.must_equal instance }
+        klass.stub! :name, 'Bar' do
+          instance.foos.each { |child| child.bar.must_equal instance }
         end
       end
 
       it 'will not override existing parent' do
-        child_class.class_eval { def bar_baz; 'ok'; end }
-        klass.stub! :name, 'BarBaz' do
-          instance.foos.first.bar_baz.must_equal 'ok'
+        child_class.class_eval { def bar; 'ok'; end }
+        klass.stub! :name, 'Bar' do
+          instance.foos.first.bar.must_equal 'ok'
         end
       end
     end
@@ -101,14 +101,14 @@ describe Craft do
       end
 
       it 'crafts recursively' do
-        klass.stub! :name, 'BarBaz' do
+        klass.stub! :name, 'Bar' do
           instance.foo.must_be_kind_of Craft
         end
       end
 
       it 'embeds parent' do
-        klass.stub! :name, 'BarBaz' do
-          instance.foo.bar_baz.must_equal instance
+        klass.stub! :name, 'Bar' do
+          instance.foo.bar.must_equal instance
         end
       end
     end
@@ -155,6 +155,20 @@ describe Craft do
       klass.stub :foo
       klass.one  :bar, 'li'
       instance.attributes.must_equal({ foo: nil, bar: '1' })
+    end
+  end
+
+  describe '#name' do
+    it 'returns a name' do
+      klass.stub! :name, 'Foo' do
+        instance.name.must_equal 'foo'
+      end
+    end
+
+    it 'underscores camel-cased names' do
+      klass.stub! :name, 'FooBar' do
+        instance.name.must_equal 'foo_bar'
+      end
     end
   end
 end
