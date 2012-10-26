@@ -2,6 +2,8 @@ require 'bundler/setup'
 require 'minitest/autorun'
 require 'craft'
 
+class Object; alias stub! stub; end
+
 describe Craft do
   let(:html) { '<html><ul><li>1</li><li>2</li>' }
   let(:klass) { Class.new Craft }
@@ -21,34 +23,36 @@ describe Craft do
 
   describe '.many' do
     it 'extracts nodes' do
-      klass.many :foo, 'li'
-      instance.foo.must_equal %w(1 2)
+      klass.many :foos, 'li'
+      instance.foos.must_equal %w(1 2)
     end
 
     it 'transforms' do
-      klass.many :foo, 'li', ->(node) { node.text.to_i }
-      instance.foo.must_equal [1, 2]
+      klass.many :foos, 'li', ->(node) { node.text.to_i }
+      instance.foos.must_equal [1, 2]
     end
 
     it 'transforms in scope' do
-      klass.many :foo, 'li', ->(node) { bar }
+      klass.many :foos, 'li', ->(node) { bar }
       klass.send(:define_method, :bar) { 'bar' }
-      instance.foo.must_equal ['bar', 'bar']
+      instance.foos.must_equal ['bar', 'bar']
     end
 
     it 'stores attribute name' do
-      klass.many :foo, 'li'
-      klass.attribute_names.must_include :foo
+      klass.many :foos, 'li'
+      klass.attribute_names.must_include :foos
     end
 
-    it 'nests' do
-      klass.many :foo, 'ul', Class.new(Craft)
-      instance.foo.each { |attr| attr.must_be_kind_of Craft }
+    it 'embeds' do
+      klass.many :foos, 'ul', Class.new(Craft)
+      instance.foos.each { |attr| attr.must_be_kind_of Craft }
     end
 
-    it 'has a parent when nested' do
-      klass.many :foo, 'li', Class.new(Craft)
-      instance.foo.each { |attr| attr.parent.must_equal instance }
+    it 'is accessible' do
+      klass.stub! :name, 'BarBaz' do
+        klass.many :foos, 'li', Class.new(Craft)
+        instance.foos.first.bar_baz.must_equal instance
+      end
     end
   end
 
@@ -75,13 +79,15 @@ describe Craft do
     end
 
     it 'nests' do
-      klass.one :foo, 'ul', Class.new(Craft)
+      klass.one :foo, 'li', Class.new(Craft)
       instance.foo.must_be_kind_of Craft
     end
 
-    it 'has a parent when nested' do
-      klass.one :foo, 'li', Class.new(Craft)
-      instance.foo.parent.must_equal instance
+    it 'is accessible' do
+      klass.stub! :name, 'BarBaz' do
+        klass.one :foo, 'li', Class.new(Craft)
+        instance.foo.bar_baz.must_equal instance
+      end
     end
 
     describe 'given no matches' do

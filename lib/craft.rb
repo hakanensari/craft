@@ -106,16 +106,14 @@ class Craft
     end
   end
 
-  # Returns a parent Object if self is nested therein.
-  attr :parent
-
   # Craft a new object.
   #
   # node   - A Nokogiri::XML::Node.
-  # parent - An Object (default: nil).
+  # parent - A Craft object (default: nil).
   def initialize(node, parent = nil)
+    @lock = Mutex.new
     @node = node
-    @parent = parent
+    make_readable parent if parent
   end
 
   # Returns the Hash attributes.
@@ -126,5 +124,20 @@ class Craft
   # Returns an Array of names for the attributes on this object.
   def attribute_names
     self.class.attribute_names
+  end
+
+  private
+
+  def make_readable(parent)
+    parent_name ||=
+      (parent.class.name || 'parent')
+        .gsub(/([a-z0-9])([A-Z])/,'\1_\2')
+        .downcase
+
+    @lock.synchronize {
+      self.class.send :attr, parent_name unless respond_to? parent_name
+    }
+
+    self.instance_variable_set "@#{parent_name}", parent
   end
 end
