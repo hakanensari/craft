@@ -16,15 +16,21 @@ class Craft
     private
 
     def attribute_defined?
-      @child.respond_to? @parent.name
+      @child.respond_to? parent_name
     end
 
     def define_attribute
-      (class << @child; self; end).class_eval "attr :#{@parent.name}"
+      (class << @child; self; end).class_eval "attr :#{parent_name}"
+    end
+
+    def parent_name
+      @parent_name ||= @parent.class.name
+        .gsub(/([a-z0-9])([A-Z])/,'\1_\2')
+        .downcase
     end
 
     def set_value
-      @child.instance_variable_set "@#{@parent.name}", @parent
+      @child.instance_variable_set "@#{parent_name}", @parent
     end
   end
 end

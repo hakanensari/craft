@@ -146,18 +146,4 @@ describe Craft do
       instance.attributes.must_equal({ foo: nil, bar: '1' })
     end
   end
-
-  describe '#name' do
-    it 'returns a name' do
-      klass.stub! :name, 'Foo' do
-        instance.name.must_equal 'foo'
-      end
-    end
-
-    it 'underscores camel-cased names' do
-      klass.stub! :name, 'FooBar' do
-        instance.name.must_equal 'foo_bar'
-      end
-    end
-  end
 end

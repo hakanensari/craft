@@ -113,7 +113,7 @@ class Craft
   # parent - A Craft object (default: nil).
   def initialize(node, parent = nil)
     @node = node
-    Association.build(parent, self) if parent
+    Association.build parent, self if parent
   end
 
   # Returns the Hash attributes.
@@ -124,12 +124,5 @@ class Craft
   # Returns an Array of names for the attributes on the object.
   def attribute_names
     self.class.attribute_names
-  end
-
-  # Returns a String name for the object.
-  def name
-    self.class.name
-      .gsub(/([a-z0-9])([A-Z])/,'\1_\2')
-      .downcase
   end
 end
