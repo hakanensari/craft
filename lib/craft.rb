@@ -1,4 +1,4 @@
-require 'craft/parentship'
+require 'craft/association'
 require 'craft/version'
 require 'nokogiri'
 
@@ -113,7 +113,7 @@ class Craft
   # parent - A Craft object (default: nil).
   def initialize(node, parent = nil)
     @node = node
-    Parentship.new(self, parent).restore if parent
+    Association.build(parent, self) if parent
   end
 
   # Returns the Hash attributes.

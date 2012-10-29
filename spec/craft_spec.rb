@@ -1,8 +1,4 @@
-require 'bundler/setup'
-require 'minitest/autorun'
-require 'craft'
-
-class Object; alias stub! stub; end
+require_relative 'helper'
 
 describe Craft do
   let(:html) { '<html><ul><li>1</li><li>2</li>' }
@@ -59,13 +55,6 @@ describe Craft do
       it 'embeds parent' do
         klass.stub! :name, 'Bar' do
           instance.foos.each { |child| child.bar.must_equal instance }
-        end
-      end
-
-      it 'will not override existing parent' do
-        child_class.class_eval { def bar; 'ok'; end }
-        klass.stub! :name, 'Bar' do
-          instance.foos.first.bar.must_equal 'ok'
         end
       end
     end
