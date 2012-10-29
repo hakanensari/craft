@@ -42,7 +42,9 @@ class Page < Craft
 end
 
 page = Page.parse open('http://www.google.com')
-page.scripts[0].body #=> 'window.google=...'
+script = page.scripts[0]
+script.body #=> 'window.google=...'
+script.page.title #=> 'Google'
 ```
 
 [1]: https://secure.travis-ci.org/papercavalier/craft.png

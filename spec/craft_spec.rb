@@ -1,6 +1,4 @@
-require 'bundler/setup'
-require 'minitest/autorun'
-require 'craft'
+require_relative 'helper'
 
 describe Craft do
   let(:html) { '<html><ul><li>1</li><li>2</li>' }
@@ -20,35 +18,45 @@ describe Craft do
   end
 
   describe '.many' do
-    it 'extracts nodes' do
-      klass.many :foo, 'li'
-      instance.foo.must_equal %w(1 2)
+    it 'crafts' do
+      klass.many :foos, 'li'
+      instance.foos.must_equal %w(1 2)
     end
 
     it 'transforms' do
-      klass.many :foo, 'li', ->(node) { node.text.to_i }
-      instance.foo.must_equal [1, 2]
+      klass.many :foos, 'li', ->(node) { node.text.to_i }
+      instance.foos.must_equal [1, 2]
     end
 
     it 'transforms in scope' do
-      klass.many :foo, 'li', ->(node) { bar }
+      klass.many :foos, 'li', ->(node) { bar }
       klass.send(:define_method, :bar) { 'bar' }
-      instance.foo.must_equal ['bar', 'bar']
+      instance.foos.must_equal ['bar', 'bar']
     end
 
     it 'stores attribute name' do
-      klass.many :foo, 'li'
-      klass.attribute_names.must_include :foo
+      klass.many :foos, 'li'
+      klass.attribute_names.must_include :foos
     end
 
-    it 'nests' do
-      klass.many :foo, 'ul', Class.new(Craft)
-      instance.foo.each { |attr| attr.must_be_kind_of Craft }
-    end
+    describe 'when nesting' do
+      let(:child_class) { Class.new Craft }
 
-    it 'has a parent when nested' do
-      klass.many :foo, 'li', Class.new(Craft)
-      instance.foo.each { |attr| attr.parent.must_equal instance }
+      before do
+        klass.many :foos, 'ul', child_class
+      end
+
+      it 'crafts recursively' do
+        klass.stub! :name, 'Bar' do
+          instance.foos.each { |child| child.must_be_kind_of Craft }
+        end
+      end
+
+      it 'embeds parent' do
+        klass.stub! :name, 'Bar' do
+          instance.foos.each { |child| child.bar.must_equal instance }
+        end
+      end
     end
   end
 
@@ -74,14 +82,24 @@ describe Craft do
       klass.attribute_names.must_include :foo
     end
 
-    it 'nests' do
-      klass.one :foo, 'ul', Class.new(Craft)
-      instance.foo.must_be_kind_of Craft
-    end
+    describe 'when nesting' do
+      let(:child_class) { Class.new Craft }
 
-    it 'has a parent when nested' do
-      klass.one :foo, 'li', Class.new(Craft)
-      instance.foo.parent.must_equal instance
+      before do
+        klass.one :foo, 'li', child_class
+      end
+
+      it 'crafts recursively' do
+        klass.stub! :name, 'Bar' do
+          instance.foo.must_be_kind_of Craft
+        end
+      end
+
+      it 'embeds parent' do
+        klass.stub! :name, 'Bar' do
+          instance.foo.bar.must_equal instance
+        end
+      end
     end
 
     describe 'given no matches' do
