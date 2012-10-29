@@ -25,6 +25,7 @@ class Craft
 
     def parent_name
       @parent_name ||= @parent.class.name
+        .gsub(/.*::/, '')
         .gsub(/([a-z0-9])([A-Z])/,'\1_\2')
         .downcase
     end

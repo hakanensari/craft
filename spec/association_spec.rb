@@ -27,6 +27,13 @@ class Craft
           child.must_respond_to :foo_bar
         end
       end
+
+      it 'ignores namespaces' do
+        parent.class.stub! :name, 'Foo::Bar::Baz' do
+          Association.build parent, child
+          child.must_respond_to :baz
+        end
+      end
     end
   end
 end
