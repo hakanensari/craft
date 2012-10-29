@@ -6,4 +6,3 @@ gemspec
 group :ci do
   gem 'rake'
 end
-gem 'pry'
