@@ -13,6 +13,8 @@ class Craft
       set_value
     end
 
+    private
+
     def attribute_defined?
       @child.respond_to? @parent.name
     end
