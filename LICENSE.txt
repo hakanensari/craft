@@ -1,4 +1,4 @@
-Copyright (c) 2012 Hakan Ensari
+Copyright (c) 2013 Hakan Ensari
 
 MIT License
 

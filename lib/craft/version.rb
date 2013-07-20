@@ -1,3 +1,3 @@
-class Craft
-  VERSION = '0.1.0'
+module Craft
+  VERSION = '0.2.0'
 end
