@@ -6,18 +6,17 @@ require 'craft/version'
 Gem::Specification.new do |gem|
   gem.name          = 'craft'
   gem.version       = Craft::VERSION
-  gem.authors       = ['Ezekiel Templin', 'Hakan Ensari']
-  gem.email         = ['code@papercavalier.com']
-  gem.description   = %q{Craft XML into objects}
-  gem.summary       = %q{Craft is a data extraction tool that crafts objects
-                         out of HTML and XML.}
-  gem.homepage      = 'http://papercavalier.com/craft/'
+  gem.authors       = ['Hakan Ensari']
+  gem.email         = ['hakan.ensari@papercavalier.com']
+  gem.summary       = 'Build page objects in Capybara'
+  gem.homepage      = 'https://github.com/hakanensari/craft'
 
   gem.files         = `git ls-files`.split($/)
-  gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
-  gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
+  gem.test_files    = gem.files.grep(%r{^test/})
   gem.require_paths = ['lib']
 
-  gem.add_dependency 'nokogiri', '~> 1.5'
+  gem.add_dependency 'capybara', '~> 2.1'
   gem.add_development_dependency 'minitest'
+  gem.add_development_dependency 'poltergeist'
+  gem.add_development_dependency 'rake'
 end
