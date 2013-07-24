@@ -36,8 +36,7 @@ class TestCraft < Minitest::Test
   end
 
   def test_thread_safety_in_a_rather_janky_way
-    urls = %q{Threads are the Ruby implementation for a concurrent programming model}
-      .split(' ')
+    urls = %w{Threads are the Ruby implementation for a concurrent programming model}
       .map { |keyword|
         Thread.new {
           duck = Home.new
