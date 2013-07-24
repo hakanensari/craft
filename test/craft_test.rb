@@ -35,16 +35,18 @@ class TestCraft < Minitest::Test
     refute_empty search.results
   end
 
-  def test_session
-    thrs = %w(ruby python)
-      .map { |query|
+  def test_thread_safety_in_a_rather_janky_way
+    urls = %q{Threads are the Ruby implementation for a concurrent programming model}
+      .split(' ')
+      .map { |keyword|
         Thread.new {
-          Thread.current[:current_url] = Home.new.search(query).current_url
+          duck = Home.new
+          Thread.current[:current_url] = duck.search(keyword).current_url
         }
       }
       .map(&:join)
+      .map { |x| x[:current_url] }
 
-    refute_equal thrs.first[:current_url], thrs.last[:current_url]
+    assert_equal urls, urls.uniq
   end
 end
-
